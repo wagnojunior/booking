@@ -1,6 +1,6 @@
 # Booking
 
-This is the repository for my booking project from the Udemy couse **Building Modern Web Applications with Golang**.
+This is the repository for my booking project from the Udemy couse **Building Modern Web Applications with Golang** by Trevor Sawler.
 
 - Built in Go version 1.18
 - Uses the [chi router](https://github.com/go-chi/chi)
