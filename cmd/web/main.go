@@ -13,17 +13,19 @@ import (
 	"github.com/alexedwards/scs/v2"
 )
 
-const portNumber = ":8080"
+// Constants
+const portNumber = ":8080" // port number
 
+// Package-level variables
 var app config.AppConfig
 var session *scs.SessionManager
 
-// main is the main function
 func main() {
 
-	// Change this to true qhen in production
+	// Set the
 	app.InProduction = false
 
+	// Set the configuration of sessions
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
