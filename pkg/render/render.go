@@ -12,8 +12,10 @@ import (
 	"github.com/wagnojunior/booking/pkg/models"
 )
 
+// Map of functions that can be used in a template, usually functions that are not built into the language
 var functions = template.FuncMap{}
 
+// Local variable of typo <*AppConfig>
 var app *config.AppConfig
 
 // NewTemplates sets the config for the template package
@@ -89,7 +91,8 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		// If the length of <matches> is grater than zero, there are might be layouts associated with templates
 		// In fact, this is the case for <about.page.tmpl> and <home.page.tmpl> which reference <base.layout.tmpl>
 		if len(matches) > 0 {
-			// Parses all the layouts
+			// ParseGlob parses the template definitions in the files identified by the pattern and associates the
+			//resulting templates with t.
 			ts, err = ts.ParseGlob("./templates/*.layout.tmpl")
 			if err != nil {
 				return myCache, err

@@ -22,7 +22,7 @@ var session *scs.SessionManager
 
 func main() {
 
-	// Set the
+	// Set the in development mode
 	app.InProduction = false
 
 	// Set the configuration of sessions
@@ -32,19 +32,26 @@ func main() {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
 
+	// Set the <Session> field in the <AppConfig>
 	app.Session = session
 
+	// Creates the template cache
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
 	}
 
+	// Sets the <TemplateCache> field in the <AppConfig>
 	app.TemplateCache = tc
 	app.UseCache = false
 
+	// Sets the variable <repo>, which points to the <AppConfig> app
 	repo := handlers.NewRepo(&app)
+
+	// Sends the local variable <repo> to <handlers.go> to initialize the variable <Repo> there
 	handlers.NewHandlers(repo)
 
+	// Initialized the variable <app> of type <*AppConfig> in <render.go>
 	render.NewTemplates(&app)
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
