@@ -5,9 +5,9 @@ type TemplateData struct {
 	StringMap map[string]string
 	IntMap    map[string]int
 	FloatMap  map[string]float32
-	Data      map[string]interface{}
-	CSRFToken string
-	Flash     string
-	Warning   string
-	Error     string
+	Data      map[string]interface{} // For other data structures, use an interface
+	CSRFToken string                 // Cross site request forgery token
+	Flash     string                 // Flash message to the end-user
+	Warning   string                 // Warning message to the end-user
+	Error     string                 // Error message to the end-user
 }

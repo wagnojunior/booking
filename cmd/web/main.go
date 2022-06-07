@@ -18,7 +18,7 @@ const portNumber = ":8080" // port number
 
 // Package-level variables
 var app config.AppConfig
-var session *scs.SessionManager
+var session *scs.SessionManager // Creates a variable <sessions>
 
 func main() {
 
@@ -26,13 +26,13 @@ func main() {
 	app.InProduction = false
 
 	// Set the configuration of sessions
-	session = scs.New()
-	session.Lifetime = 24 * time.Hour
-	session.Cookie.Persist = true
-	session.Cookie.SameSite = http.SameSiteLaxMode
+	session = scs.New()                            // Creates a new session
+	session.Lifetime = 24 * time.Hour              // Defines for how long the session will persist
+	session.Cookie.Persist = true                  // Cookies will persist after the browser is closed by the end-user
+	session.Cookie.SameSite = http.SameSiteLaxMode //
 	session.Cookie.Secure = app.InProduction
 
-	// Set the <Session> field in the <AppConfig>
+	// Set the <Session> field in the <AppConfig>, thus exposing this variable to all packages that import <config.go>
 	app.Session = session
 
 	// Creates the template cache
@@ -56,11 +56,13 @@ func main() {
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
 
+	// Initializes a server
 	srv := &http.Server{
 		Addr:    portNumber,
-		Handler: routes(&app),
+		Handler: routes(&app), // Instead of writing the handlers one by one for every webpage, pass the routes function
 	}
 
+	// Start the server
 	err = srv.ListenAndServe()
 	log.Fatal(err)
 }

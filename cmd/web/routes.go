@@ -10,14 +10,22 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+// Instead of routing every page of the web application in the <main.go> files, it is a good practice to do it in separate file.
+// For reference, the routing was done in the following manner:
+// http.HandleFunc("/", handlers.Repo.Home)
+// http.HandleFunc("/about", handlers.Repo.About)
 func routes(app *config.AppConfig) http.Handler {
+	// A http handlers is often times called a mux or a multiplexor
+
+	// Create a new mux
 	mux := chi.NewRouter()
 
 	// Middleware allows you to process a web request as it comes and perform an action
-	mux.Use(middleware.Recoverer)
-	mux.Use(NoSurf)
+	mux.Use(middleware.Recoverer) // Gracefully absorb panics and prints the stack trace
+	mux.Use(NoSurf)               // Our own middleware which was created in <middleware.go> using the third-party package <nosurf>
 	mux.Use(SessionLoad)
 
+	// Get the http requests
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
 

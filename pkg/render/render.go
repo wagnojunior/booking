@@ -23,6 +23,8 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+// AddDefaultData sets the data that will be available to all templates, that is the default data.
+// So far there is no such a data, but eventually we will use it
 func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 
 	return td
@@ -46,8 +48,10 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData)
 
 	buf := new(bytes.Buffer)
 
+	// Sets the default data <td>
 	td = AddDefaultData(td)
 
+	// Data is passed to the template when it is executed; in this case <td> is passed to the template
 	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
