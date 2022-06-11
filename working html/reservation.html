@@ -65,11 +65,31 @@
     <!-- Welcome and description -->
     <div class="container">
         <div class="row">
-            <div class="col">
-                <h1 class="text-center mt-4">Book</h1>
-                <p>
-                    This will be the book page
-                </p>
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <!-- Title -->
+                <h1 class="text-center mt-4">Search for availability</h1>
+
+                <!-- Form -->
+                <form action="reservation.html" method="get">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="start_date">Starting date</label>
+                                <input required type="date" class="form-control" id="start_date" name="start_date" aria-describedby="startDateHelp" placeholder="Enter starting date">
+                                <small id="startDateHelp" class="form-text text-muted">Enter your starting date in the form dd/mm/yyyy.</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="end_date">Ending date</label>
+                                <input required type="date" class="form-control" id="end_date" name="end_date" aria-describedby="endDateHelp" placeholder="Enter ending date">
+                                <small id="endDateHelp" class="form-text text-muted">Enter your ending date in the form dd/mm/yyyy.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search availability</button>
+                </form>
             </div>
         </div>
         
