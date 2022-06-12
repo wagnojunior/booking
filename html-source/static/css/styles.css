@@ -1,0 +1,9 @@
+/* Footer */
+.my-footer {
+    height: 5em;
+    background-color: #262626;
+    color: white;
+    font-size: 80%;
+    margin-top: 2em;
+    padding: 1em;
+}
