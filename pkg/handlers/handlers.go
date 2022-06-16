@@ -55,3 +55,28 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 		StringMap: stringMap,
 	})
 }
+
+// MakeReservation is the handler for the make reservation page
+func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "make-reservation.page.tmpl", &models.TemplateData{})
+}
+
+// PandaSuite is the handler for the Panda Suite  page
+func (m *Repository) PandaSuite(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "panda-suite.page.tmpl", &models.TemplateData{})
+}
+
+// BambooDorm is the handler for the Bamboo Dorm page
+func (m *Repository) BambooDorm(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "bamboo-dorm.page.tmpl", &models.TemplateData{})
+}
+
+// SearchAvailability is the handler for the Book Now page
+func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "search-availability.page.tmpl", &models.TemplateData{})
+}
+
+// Contact is the handler for the Contact page
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "contact.page.tmpl", &models.TemplateData{})
+}

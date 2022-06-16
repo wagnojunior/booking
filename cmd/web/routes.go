@@ -28,6 +28,10 @@ func routes(app *config.AppConfig) http.Handler {
 	// Get the http requests
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+	mux.Get("/panda-suite", handlers.Repo.PandaSuite)
+	mux.Get("/bamboo-dorm", handlers.Repo.BambooDorm)
+	mux.Get("/search-availability", handlers.Repo.SearchAvailability)
+	mux.Get("/contact", handlers.Repo.Contact)
 
 	// Creates a file server from which static files are retrieved
 	fileServer := http.FileServer(http.Dir("./static/"))

@@ -1,0 +1,64 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <!-- Welcome and description -->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <img src="/static/images/panda-suite.png" alt="room image" class="img-fluid img-thumbnail mx-auto d-block" width="50%">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-4">Panda Suite</h1>
+                <p>
+                    Your home away from home, set on the majestic city of Suwon, South Korea. Whether you are here for business or travel, 
+                    Panpanzinho's Bed and Breakfast is the right accomodation for your specific needs! We provide a wide range of activities for all 
+                    age groups, such as a light stroll around the beautiful Suwon Fortress or a crazy night at the burstling beighborhood of Ingye-dong! 
+                    We provide free bicycle rent and a map with the best restaurants around.
+                </p>
+            </div>
+        </div>
+
+        <!-- Button "Make reservation now" -->
+        <div class="row">
+            <div class="col text-center">
+                <a id="btn-check-availability" href="#1" class="btn btn-success">Check availability</a>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "js"}}
+    <script>
+        // Custom function that toggles the color of a paragraph
+        document.getElementById("btn-check-availability").addEventListener("click", function(){
+
+            // Creates a custom HTML to be displayed on SweetAlert
+            let html = `
+                <form action="search-availability.html" method="get" novalidate class="needs-validation">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row" id="form_dateRange_2">
+                                <div class="col">
+                                    <label for="arrivalDate_2">Arrial date</label>
+                                    <input required class="form-control" type="text" name="start" id="arrivalDate_2" placeholder="Arrival date">
+                                </div>
+                                <div class="col">
+                                    <label for="departureDate_2">Departure date</label>
+                                    <input required class="form-control" type="text" name="end" id="departureDate_2" placeholder="Departure date">
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- row -->
+                    <hr>
+                </form>
+            `
+            pmt.custom({
+                text: html,
+                title: "Search availability"
+            })
+        });
+    </script>
+{{end}}

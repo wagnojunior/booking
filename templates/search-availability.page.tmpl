@@ -1,0 +1,55 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <!-- Welcome and description -->
+    <div class="container">
+        <div class="row">
+            <!-- Title -->
+            <h1 class="text-center mt-4">Search for availability</h1>
+
+            <!-- Form -->
+            <form action="search-availability.html" method="get" novalidate class="needs-validation">
+                <div class="row">
+                    <div class="col">
+                        <div class="row" id="form_dateRange">
+                            <div class="col">
+                                <label for="arrivalDate">Arrial date</label>
+                                <input required class="form-control" type="text" name="start" id="arrivalDate" placeholder="Arrival date">
+                            </div>
+                            <div class="col">
+                                <label for="departureDate">Departure date</label>
+                                <input required class="form-control" type="text" name="end" id="departureDate" placeholder="Departure date">
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+                <hr>
+                <!-- Button -->
+                <button type="submit" class="btn btn-primary">Search availability</button>
+            </form>
+        </div> <!-- row -->
+    </div> <!-- container -->
+
+        <div class="row">
+            <div class="col">
+                <p id="myParagraph">
+                    This is a paragraph outside of a container
+                </p>
+                <p>
+                    <button id="colorButton" class="btn btn-outline-secondary">Click me</button>
+                </p>
+            </div>
+        </div>
+        
+    </div>
+{{end}}
+
+{{define "js"}}
+    <script>
+        // Date picker
+        const elem = document.getElementById('form_dateRange');
+            const rangepicker = new DateRangePicker(elem, {
+                format: "yyyy/mm/dd"
+            });
+    </script>
+{{end}}

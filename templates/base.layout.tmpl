@@ -1,32 +1,222 @@
 {{define "base"}}
-    <!doctype html>
+    <!DOCTYPE html>
     <html lang="en">
+
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Document</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-              integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
-              crossorigin="anonymous">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker.min.css">
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.min.css">
 
-        {{block "css" .}}
+        <!-- Link to local css style sheet -->
+        <link rel="stylesheet" href="/static/css/styles.css" type="text/css">
 
-        {{end}}
+        <!-- Page title -->
+        <title>Panpanzinho's B&B</title>
     </head>
-    <body>
 
-        <p>This paragraph comes from the base layout! Let's see if it works...</p>
+    <body>
+        <!-- Navigation bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Item HOME -->
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                    <!-- Item ABOUT -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <!-- Item ROOMS -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Rooms</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <!-- Subitem HOME -->
+                            <li><a class="dropdown-item" href="/panda-suite">Panda Suite</a></li>
+                            <!-- Subitem HOME -->
+                            <li><a class="dropdown-item" href="/bamboo-dorm">Bamboo Dormitory</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search-availability">Book now</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
         {{block "content" .}}
 
         {{end}}
 
+        <!-- Footer -->
+        <div class="row my-footer">
+            <div class="col">
+                Left
+            </div>
+            <div class="col">
+                Middle
+            </div>
+            <div class="col">
+                Right
+            </div>
+        </div>
+
+        <!--Must include Bootstrap commands-->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>
+        <script src="https://unpkg.com/notie"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.min.js"></script>
 
         {{block "js" .}}
 
         {{end}}
+        
+        <!-- JavaScript to support HTML elements -->
+        <script>
+            let pmt = prompt();
+
+            // Validation of forms
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                    let forms = document.getElementsByClassName('needs-validation');
+                    // Loop over them and prevent submission
+                    Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                    });
+                }, false);
+                })();
+
+            // Alerts
+            function notify(msgType, msg) {
+                notie.alert({
+                    type: msgType,
+                    text: msg,
+                    })
+            }
+
+            // notifyModel
+            function notifyModel(title, text, icon, confirmButtonText) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: icon,
+                    confirmButtonText: confirmButtonText
+                    })
+            }
+
+            // prompt handles all the SweetAlert
+            function prompt() {
+                let toast = function(c) {
+                    const {
+                        msg = "",
+                        icon = "success",
+                        position = "top-end",
+                    } = c;
+
+                    Swal.fire({
+                        toast: true,
+                        title: msg,
+                        position: position,
+                        icon: icon,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                }
+
+                let success = function(c) {
+                    const {
+                        title = "",
+                        text = "",
+                    } = c;
+
+                    Swal.fire({
+                        icon: "success",
+                        title: title,
+                        text: text
+                        })
+                }
+
+                let error = function(c) {
+                    const {
+                        title = "",
+                        text = "",
+                    } = c;
+
+                    Swal.fire({
+                        icon: "error",
+                        title: title,
+                        text: text
+                        })
+                }
+
+                async function custom(c) {
+                    const {
+                        text = "", // HTML text that will be displayed
+                        title = "", // Title that will be displayed
+                    } = c;
+
+                    const { value: formValues } = await Swal.fire({
+                        title: title,
+                        html: text,
+                        backdrop: true,
+                        focusConfirm: true,
+                        showCancelButton: true,
+                        willOpen: () => {
+                            const elem = document.getElementById('form_dateRange_2');
+                            const rangepicker = new DateRangePicker(elem, {
+                                format: "yyyy/mm/dd",
+                                showOnFocus: true,
+                                orientation: 'auto top',
+                            });
+                        },
+                        preConfirm: () => {
+                            return [
+                            document.getElementById('arrivalDate_2').value,
+                            document.getElementById('departureDate_2').value
+                            ]
+                        }
+                        })
+
+                        if (formValues) {
+                        Swal.fire(JSON.stringify(formValues))
+                        }
+                }
+
+                return {
+                    toast: toast,
+                    success: success,
+                    error: error,
+                    custom: custom,
+                }
+            }
+        </script>
 
     </body>
     </html>
