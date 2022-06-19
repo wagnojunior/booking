@@ -8,7 +8,8 @@
             <h1 class="text-center mt-4">Search for availability</h1>
 
             <!-- Form -->
-            <form action="search-availability.html" method="get" novalidate class="needs-validation">
+            <form action="/search-availability" method="post" novalidate class="needs-validation">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="row">
                     <div class="col">
                         <div class="row" id="form_dateRange">

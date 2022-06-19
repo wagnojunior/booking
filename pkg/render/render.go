@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/justinas/nosurf"
 	"github.com/wagnojunior/booking/pkg/config"
 	"github.com/wagnojunior/booking/pkg/models"
 )
@@ -25,13 +26,13 @@ func NewTemplates(a *config.AppConfig) {
 
 // AddDefaultData sets the data that will be available to all templates, that is the default data.
 // So far there is no such a data, but eventually we will use it
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
-
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
 // RenderTemplate renders a template
-func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -49,7 +50,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData)
 	buf := new(bytes.Buffer)
 
 	// Sets the default data <td>
-	td = AddDefaultData(td)
+	td = AddDefaultData(td, r)
 
 	// Data is passed to the template when it is executed; in this case <td> is passed to the template
 	_ = t.Execute(buf, td)

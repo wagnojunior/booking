@@ -32,6 +32,11 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/bamboo-dorm", handlers.Repo.BambooDorm)
 	mux.Get("/search-availability", handlers.Repo.SearchAvailability)
 	mux.Get("/contact", handlers.Repo.Contact)
+	mux.Get("/make-reservation", handlers.Repo.MakeReservation)
+
+	// Post the http requests
+	mux.Post("/search-availability", handlers.Repo.PostSearchAvailability) // Catch requests that POST to this url and send it to the specified handler
+	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
 
 	// Creates a file server from which static files are retrieved
 	fileServer := http.FileServer(http.Dir("./static/"))

@@ -189,25 +189,40 @@
                         focusConfirm: true,
                         showCancelButton: true,
                         willOpen: () => {
-                            const elem = document.getElementById('form_dateRange_2');
-                            const rangepicker = new DateRangePicker(elem, {
-                                format: "yyyy/mm/dd",
-                                showOnFocus: true,
-                                orientation: 'auto top',
-                            });
+                            if (c.willOpen !== undefined) {
+                                c.willOpen();
+                            }
                         },
                         preConfirm: () => {
                             return [
                             document.getElementById('arrivalDate_2').value,
                             document.getElementById('departureDate_2').value
                             ]
+                        },
+                        didOpen: () => {
+                            if (c.didOpen !== undefined) {
+                                c.didOpen()
+                            }
                         }
-                        })
+                    })
 
+                        // Checks if there is soe result comming back from the dialog box
                         if (formValues) {
-                        Swal.fire(JSON.stringify(formValues))
+                            // If the result is NOT the cancel button
+                            if (formValues.dismiss !== Swal.DismissReason.cancel) {
+                                // If the result is not empty
+                                if (formValues.value !== "") {
+                                    if (c.callback !== undefined) {
+                                        c.callback(formValues);
+                                    }
+                                } else {
+                                    c.callback(false)
+                                }
+                            } else {
+                                c.callback(false)
+                            }
                         }
-                }
+                    }
 
                 return {
                     toast: toast,

@@ -37,7 +37,7 @@
 
             // Creates a custom HTML to be displayed on SweetAlert
             let html = `
-                <form action="search-availability.html" method="get" novalidate class="needs-validation">
+                <form id='form-check-availability' action="search-availability.html" method="get" novalidate class="needs-validation">
                     <div class="row">
                         <div class="col">
                             <div class="row" id="form_dateRange_2">
@@ -55,9 +55,46 @@
                     <hr>
                 </form>
             `
+            // Calls the custom function from the SweetAlert.
+            // callback is defines what to do with the data received from this alert
             pmt.custom({
                 text: html,
-                title: "Search availability"
+                title: "Search availability",
+                
+                willOpen: () => {
+                    const elem = document.getElementById('form_dateRange_2');
+                    const rangepicker = new DateRangePicker(elem, {
+                        format: "yyyy/mm/dd",
+                        showOnFocus: true,
+                        orientation: 'auto top',
+                    })
+                },
+
+                didOpen: () => {
+                    document.getElementById('arrivalDate_2').removeAttribute('disabled');
+                    document.getElementById('departureDate_2').removeAttribute('disabled');
+                },
+
+                callback: function(formValues) {
+                    console.log("called");
+
+                    // Creates a formData variable that contains all of the inputs of the form <form>
+                    let form = document.getElementById("form-check-availability");
+                    let formData = new FormData(form);
+                    formData.append("csrf_token", "{{.CSRFToken}}");
+
+                    // AJAX request
+                    fetch('/search-availability-json', {
+                        method: "post",
+                        body: formData,
+                    })
+                        .then(formValues => formValues.json())
+                        .then(data => {
+                            console.log(data)
+                            console.log(data.ok)
+                            console.log(data.message)
+                        })
+                }
             })
         });
     </script>
