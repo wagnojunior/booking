@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/wagnojunior/booking/pkg/config"
-	"github.com/wagnojunior/booking/pkg/handlers"
+	"github.com/wagnojunior/booking/internal/config"
+	"github.com/wagnojunior/booking/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

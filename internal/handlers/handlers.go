@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/wagnojunior/booking/pkg/config"
-	"github.com/wagnojunior/booking/pkg/models"
-	"github.com/wagnojunior/booking/pkg/render"
+	"github.com/wagnojunior/booking/internal/config"
+	"github.com/wagnojunior/booking/internal/models"
+	"github.com/wagnojunior/booking/internal/render"
 )
 
 // Repo the repository used by the handlers

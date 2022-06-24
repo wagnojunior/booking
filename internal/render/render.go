@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 
 	"github.com/justinas/nosurf"
-	"github.com/wagnojunior/booking/pkg/config"
-	"github.com/wagnojunior/booking/pkg/models"
+	"github.com/wagnojunior/booking/internal/config"
+	"github.com/wagnojunior/booking/internal/models"
 )
 
 // Map of functions that can be used in a template, usually functions that are not built into the language
