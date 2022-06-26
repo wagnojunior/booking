@@ -1,5 +1,7 @@
 package models
 
+import "github.com/wagnojunior/booking/internal/forms"
+
 // TemplateData holds data sent from handlers to templates
 type TemplateData struct {
 	StringMap map[string]string
@@ -10,4 +12,5 @@ type TemplateData struct {
 	Flash     string                 // Flash message to the end-user
 	Warning   string                 // Warning message to the end-user
 	Error     string                 // Error message to the end-user
+	Form      *forms.Form
 }

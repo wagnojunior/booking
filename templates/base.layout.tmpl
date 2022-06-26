@@ -106,7 +106,7 @@
                     }, false);
                     });
                 }, false);
-                })();
+            })();
 
             // Alerts
             function notify(msgType, msg) {
@@ -125,6 +125,18 @@
                     confirmButtonText: confirmButtonText
                     })
             }
+
+            {{with .Error}}
+                notify("error", "{{.}}")
+            {{end}}
+
+            {{with .Flash}}
+                notify("success", "{{.}}")
+            {{end}}
+
+            {{with .Warning}}
+                notify("warnning", "{{.}}")
+            {{end}}
 
             // prompt handles all the SweetAlert
             function prompt() {
@@ -206,23 +218,23 @@
                         }
                     })
 
-                        // Checks if there is soe result comming back from the dialog box
-                        if (formValues) {
-                            // If the result is NOT the cancel button
-                            if (formValues.dismiss !== Swal.DismissReason.cancel) {
-                                // If the result is not empty
-                                if (formValues.value !== "") {
-                                    if (c.callback !== undefined) {
-                                        c.callback(formValues);
-                                    }
-                                } else {
-                                    c.callback(false)
+                    // Checks if there is soe result comming back from the dialog box
+                    if (formValues) {
+                        // If the result is NOT the cancel button
+                        if (formValues.dismiss !== Swal.DismissReason.cancel) {
+                            // If the result is not empty
+                            if (formValues.value !== "") {
+                                if (c.callback !== undefined) {
+                                    c.callback(formValues);
                                 }
                             } else {
                                 c.callback(false)
                             }
+                        } else {
+                            c.callback(false)
                         }
                     }
+                }
 
                 return {
                     toast: toast,
