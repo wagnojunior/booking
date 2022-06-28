@@ -13,6 +13,9 @@ import (
 	"github.com/wagnojunior/booking/internal/models"
 )
 
+// Set the path to the templates
+var pathToTemplates = "./templates"
+
 // Map of functions that can be used in a template, usually functions that are not built into the language
 var functions = template.FuncMap{}
 
@@ -71,7 +74,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 
 	// Gets the file path of all files in the folder <templates> that end with <.page.tmpl>
-	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
 	if err != nil {
 		return myCache, err
 	}
@@ -90,7 +93,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		}
 
 		// <Glob> returns the names of all files matching pattern or nil if there is no matching file
-		matches, err := filepath.Glob("./templates/*.layout.tmpl")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 		if err != nil {
 			return myCache, err
 		}
@@ -100,7 +103,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		if len(matches) > 0 {
 			// ParseGlob parses the template definitions in the files identified by the pattern and associates the
 			//resulting templates with t.
-			ts, err = ts.ParseGlob("./templates/*.layout.tmpl")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 			if err != nil {
 				return myCache, err
 			}

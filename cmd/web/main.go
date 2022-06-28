@@ -23,6 +23,25 @@ var app config.AppConfig
 var session *scs.SessionManager // Creates a variable <sessions>
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
+
+	// Initializes a server
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app), // Instead of writing the handlers one by one for every webpage, pass the routes function
+	}
+
+	// Start the server
+	err = srv.ListenAndServe()
+	log.Fatal(err)
+}
+
+func run() error {
 	// Things that will be put in sessions
 	gob.Register(models.Reservation{})
 
@@ -43,6 +62,7 @@ func main() {
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
+		return err
 	}
 
 	// Sets the <TemplateCache> field in the <AppConfig>
@@ -58,15 +78,5 @@ func main() {
 	// Initialized the variable <app> of type <*AppConfig> in <render.go>
 	render.NewTemplates(&app)
 
-	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
-
-	// Initializes a server
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app), // Instead of writing the handlers one by one for every webpage, pass the routes function
-	}
-
-	// Start the server
-	err = srv.ListenAndServe()
-	log.Fatal(err)
+	return nil
 }
