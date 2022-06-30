@@ -64,7 +64,7 @@ func getRoutes() http.Handler {
 
 	// Middleware allows you to process a web request as it comes and perform an action
 	mux.Use(middleware.Recoverer) // Gracefully absorb panics and prints the stack trace
-	mux.Use(NoSurf)               // Our own middleware which was created in <middleware.go> using the third-party package <nosurf>
+	// mux.Use(NoSurf)               // Our own middleware which was created in <middleware.go> using the third-party package <nosurf>
 	mux.Use(SessionLoad)
 
 	// Get the http requests

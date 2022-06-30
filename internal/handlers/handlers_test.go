@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -25,6 +26,20 @@ var theTest = []struct {
 	{"search-availability", "/search-availability", "GET", []postData{}, http.StatusOK}, // first entry of the test
 	{"contact", "/contact", "GET", []postData{}, http.StatusOK},                         // first entry of the test
 	{"make-reservation", "/make-reservation", "GET", []postData{}, http.StatusOK},       // first entry of the test
+	{"post-search-availability", "/search-availability", "POST", []postData{
+		{key: "start", value: "2022-01-01"},
+		{key: "end", value: "2022-01-02"},
+	}, http.StatusOK},
+	{"post-search-availability-json", "/search-availability-json", "POST", []postData{
+		{key: "start", value: "2022-01-01"},
+		{key: "end", value: "2022-01-02"},
+	}, http.StatusOK},
+	{"make-reservation", "/make-reservation", "POST", []postData{
+		{key: "first_name", value: "John"},
+		{key: "last_name", value: "Smith"},
+		{key: "email", value: "me@here.com"},
+		{key: "phone", value: "555-555-5555"},
+	}, http.StatusOK},
 }
 
 func TestHandler(t *testing.T) {
@@ -34,6 +49,7 @@ func TestHandler(t *testing.T) {
 	ts := httptest.NewTLSServer(routes)
 	defer ts.Close()
 
+	// Loop thruogh all test cases defined above
 	for _, e := range theTest {
 		if e.method == "GET" {
 			resp, err := ts.Client().Get(ts.URL + e.url)
@@ -45,8 +61,23 @@ func TestHandler(t *testing.T) {
 			if resp.StatusCode != e.expectedCode {
 				t.Errorf("For %s, expected %d but got %d", e.name, e.expectedCode, resp.StatusCode)
 			}
-		} else {
+		} else { // POST method
+			// creates a variable that has the same format expected by the server
+			values := url.Values{}
+			// populate with the test entries
+			for _, x := range e.params {
+				values.Add(x.key, x.value)
+			}
 
+			resp, err := ts.Client().PostForm(ts.URL+e.url, values)
+			if err != nil {
+				t.Log(err)
+				t.Fatal(err)
+			}
+
+			if resp.StatusCode != e.expectedCode {
+				t.Errorf("For %s, expected %d but got %d", e.name, e.expectedCode, resp.StatusCode)
+			}
 		}
 	}
 }
