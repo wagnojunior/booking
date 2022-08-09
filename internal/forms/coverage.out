@@ -1,0 +1,18 @@
+mode: set
+github.com/wagnojunior/booking/internal/forms/errors.go:9.44,11.2 1 1
+github.com/wagnojunior/booking/internal/forms/errors.go:14.42,16.18 2 1
+github.com/wagnojunior/booking/internal/forms/errors.go:20.2,20.14 1 1
+github.com/wagnojunior/booking/internal/forms/errors.go:16.18,18.3 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:18.33,23.2 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:26.43,27.31 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:27.31,29.37 2 1
+github.com/wagnojunior/booking/internal/forms/forms.go:29.37,31.4 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:36.39,38.13 2 1
+github.com/wagnojunior/booking/internal/forms/forms.go:43.2,43.13 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:38.13,41.3 2 1
+github.com/wagnojunior/booking/internal/forms/forms.go:47.57,49.21 2 1
+github.com/wagnojunior/booking/internal/forms/forms.go:53.2,53.13 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:49.21,52.3 2 1
+github.com/wagnojunior/booking/internal/forms/forms.go:58.29,60.2 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:63.38,64.40 1 1
+github.com/wagnojunior/booking/internal/forms/forms.go:64.40,66.3 1 1

@@ -96,7 +96,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	// Server-side form validation
 	// form.Has("first_name", r)
 	form.Required("first_name", "last_name", "email")
-	form.MinLength("first_name", 3, r)
+	form.MinLength("first_name", 3)
 	form.IsEmail("email")
 
 	// Check if the form is NOT valid and send back the form data to the make-reservation template
