@@ -2,6 +2,7 @@ package render
 
 import (
 	"encoding/gob"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -23,6 +24,14 @@ func TestMain(m *testing.M) {
 
 	// Set the in development mode
 	testApp.InProduction = false
+
+	// Creates the infoLog. Write to the standard output (terminal),
+	// prefixed by the tag INFO, and flagged by the date and time
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	testApp.InfoLog = infoLog
+
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	testApp.ErrorLog = errorLog
 
 	// Set the configuration of sessions
 	session = scs.New()                            // Creates a new session

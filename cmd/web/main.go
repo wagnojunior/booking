@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/wagnojunior/booking/internal/config"
 	"github.com/wagnojunior/booking/internal/handlers"
+	"github.com/wagnojunior/booking/internal/helpers"
 	"github.com/wagnojunior/booking/internal/models"
 	"github.com/wagnojunior/booking/internal/render"
 
@@ -21,6 +23,8 @@ const portNumber = ":8080" // port number
 // Package-level variables
 var app config.AppConfig
 var session *scs.SessionManager // Creates a variable <sessions>
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	err := run()
@@ -47,6 +51,14 @@ func run() error {
 
 	// Set the in development mode
 	app.InProduction = false
+
+	// Creates the infoLog. Write to the standard output (terminal),
+	// prefixed by the tag INFO, and flagged by the date and time
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 
 	// Set the configuration of sessions
 	session = scs.New()                            // Creates a new session
@@ -77,6 +89,9 @@ func run() error {
 
 	// Initialized the variable <app> of type <*AppConfig> in <render.go>
 	render.NewTemplates(&app)
+
+	// Initialized the variable <app> of type <*AppConfig> in <helpers.go>
+	helpers.NewHelpers(&app)
 
 	return nil
 }
