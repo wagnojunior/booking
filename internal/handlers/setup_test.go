@@ -66,7 +66,7 @@ func getRoutes() http.Handler {
 	NewHandlers(repo)
 
 	// Initialized the variable <app> of type <*AppConfig> in <render.go>
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	// Create a new mux
 	mux := chi.NewRouter()

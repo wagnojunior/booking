@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/wagnojunior/booking/internal/config"
+	"github.com/wagnojunior/booking/internal/driver"
 	"github.com/wagnojunior/booking/internal/forms"
 	"github.com/wagnojunior/booking/internal/helpers"
 	"github.com/wagnojunior/booking/internal/models"
 	"github.com/wagnojunior/booking/internal/render"
+	"github.com/wagnojunior/booking/internal/repository"
+	"github.com/wagnojunior/booking/internal/repository/dbrepo"
 )
 
 // Repo the repository used by the handlers
@@ -18,12 +23,14 @@ var Repo *Repository
 // Repository
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
@@ -35,14 +42,14 @@ func NewHandlers(r *Repository) {
 // Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	// Render the template
-	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "home.page.tmpl", &models.TemplateData{})
 }
 
 // About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	// Render the template
-	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "about.page.tmpl", &models.TemplateData{})
 }
 
 // MakeReservation is the handler for the make reservation page
@@ -52,7 +59,7 @@ func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["reservation"] = emptyReservation
 
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+	render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil), // Pass an empty form to the make-reservation template
 		Data: data,           // Pass the empty reservation model to the make-reservation template
 	})
@@ -67,12 +74,35 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+
+	// Parse dates from string to time format
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	// Parse from string to int
+	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	// reservation holds the data from the resservation form, which was entered by the user
 	reservation := models.Reservation{
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
 		Phone:     r.Form.Get("phone"),
 		Email:     r.Form.Get("email"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomID,
 	}
 
 	// Creates a form object
@@ -91,12 +121,18 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		data["reservation"] = reservation
 
 		// Render the template again, but now sending the data from the form to be repopulated
-		render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 			Form: form,
 			Data: data,
 		})
 
 		return
+	}
+
+	// Dave to database
+	err = m.DB.InsertReservation(reservation)
+	if err != nil {
+		helpers.ServerError(w, err)
 	}
 
 	// Stores the variable reservation in the session
@@ -108,17 +144,17 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 // PandaSuite is the handler for the Panda Suite  page
 func (m *Repository) PandaSuite(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "panda-suite.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "panda-suite.page.tmpl", &models.TemplateData{})
 }
 
 // BambooDorm is the handler for the Bamboo Dorm page
 func (m *Repository) BambooDorm(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "bamboo-dorm.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "bamboo-dorm.page.tmpl", &models.TemplateData{})
 }
 
 // SearchAvailability is the handler for the Book Now page
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "search-availability.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "search-availability.page.tmpl", &models.TemplateData{})
 }
 
 // PostSearchAvailability is the handler for the Book Now page
@@ -156,7 +192,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 // Contact is the handler for the Contact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
 // Contact is the handler for the Contact page
@@ -180,7 +216,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	data["reservation"] = reservation
 
 	// Renders the template reservation-summary and passes the session information to it
-	render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TemplateData{
+	render.Template(w, r, "reservation-summary.page.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
