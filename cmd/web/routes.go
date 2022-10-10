@@ -34,6 +34,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/contact", handlers.Repo.Contact)
 	mux.Get("/make-reservation", handlers.Repo.MakeReservation)
 	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
+	mux.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
 
 	// Post the http requests
 	mux.Post("/search-availability", handlers.Repo.PostSearchAvailability) // Catch requests that POST to this url and send it to the specified handler
