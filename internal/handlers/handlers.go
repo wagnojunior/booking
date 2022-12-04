@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -55,18 +57,51 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 // MakeReservation is the handler for the make reservation page
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	// Creates an empty model reservation and stores it the same format as templatedata.Data
-	var emptyReservation models.Reservation
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("cannot get reservation from session"))
+		return
+	}
+
+	// get the room information by ID
+	room, err := m.DB.GetRoomByID(res.RoomID)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Add the room name to the reservation model
+	res.Room.RoomName = room.RoomName
+
+	// Add the reservation model <res> to the session
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	// Format the date to string
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
+
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
+
 	data := make(map[string]interface{})
-	data["reservation"] = emptyReservation
+	data["reservation"] = res
 
 	render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
-		Form: forms.New(nil), // Pass an empty form to the make-reservation template
-		Data: data,           // Pass the empty reservation model to the make-reservation template
+		Form:      forms.New(nil), // Pass an empty form to the make-reservation template
+		Data:      data,           // Pass the empty reservation model to the make-reservation template
+		StringMap: stringMap,
 	})
 }
 
 // PostMakeReservation handles the posting of a reservation form
 func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
+	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("cannot get from session"))
+		return
+	}
+
 	// Parse the form and check for errors
 	err := r.ParseForm()
 	if err != nil {
@@ -74,39 +109,10 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	sd := r.Form.Get("start_date")
-	ed := r.Form.Get("end_date")
-
-	// Parse dates from string to time format
-	layout := "2006-01-02"
-	startDate, err := time.Parse(layout, sd)
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-	endDate, err := time.Parse(layout, ed)
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	// Parse from string to int
-	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	// reservation holds the data from the resservation form, which was entered by the user
-	reservation := models.Reservation{
-		FirstName: r.Form.Get("first_name"),
-		LastName:  r.Form.Get("last_name"),
-		Phone:     r.Form.Get("phone"),
-		Email:     r.Form.Get("email"),
-		StartDate: startDate,
-		EndDate:   endDate,
-		RoomID:    roomID,
-	}
+	reservation.FirstName = r.Form.Get("first_name")
+	reservation.LastName = r.Form.Get("last_name")
+	reservation.Phone = r.Form.Get("phone")
+	reservation.Email = r.Form.Get("email")
 
 	// Creates a form object
 	form := forms.New(r.PostForm)
@@ -141,9 +147,9 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 	// Creates a restriction with the newly created reservation (ID)
 	restriction := models.RoomRestriction{
-		StartDate:     startDate,
-		EndDate:       endDate,
-		RoomID:        roomID,
+		StartDate:     reservation.StartDate,
+		EndDate:       reservation.EndDate,
+		RoomID:        reservation.RoomID,
 		ReservationID: newReservationID,
 		RestrictionID: 1,
 	}
@@ -226,16 +232,37 @@ func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Reque
 
 // Defines a type to represent a json format
 type jsonResponse struct {
-	OK      bool   `json:"ok"`
-	Message string `json:"message"`
+	OK        bool   `json:"ok"`
+	Message   string `json:"message"`
+	RoomID    string `json:"room_id"`
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
 }
 
 // AvailabilityJSON handles requests for availability and sends JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+
+	// Get the fields BY NAME from the form
+	sd := r.Form.Get("start")
+	ed := r.Form.Get("end")
+
+	// Convert sd and ed from string to date
+	layout := "2006/01/02"
+	startDate, _ := time.Parse(layout, sd)
+	endDate, _ := time.Parse(layout, ed)
+
+	log.Println(startDate, endDate)
+
+	roomID, _ := strconv.Atoi(r.Form.Get("room_id"))
+
+	available, _ := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
 	// Creates and populates a variable <resp> of type <jsonResponse>
 	resp := jsonResponse{
-		OK:      false,
-		Message: "Available!",
+		OK:        available,
+		Message:   "",
+		StartDate: sd,
+		EndDate:   ed,
+		RoomID:    strconv.Itoa(roomID),
 	}
 
 	// Formats to json format based on the json tags defined within the ``
@@ -274,9 +301,16 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 
+	sd := reservation.StartDate.Format("2006-01-02")
+	ed := reservation.EndDate.Format("2006-01-02")
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
+
 	// Renders the template reservation-summary and passes the session information to it
 	render.Template(w, r, "reservation-summary.page.tmpl", &models.TemplateData{
-		Data: data,
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
