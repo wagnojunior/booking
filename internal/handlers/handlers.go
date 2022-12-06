@@ -314,6 +314,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
+// ChooseRoom displays list of available rooms
 func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 	roomID, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
@@ -333,4 +334,39 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 
+}
+
+// BookRoom takes URL parameters, builds a sessional variable, and takes user to make a reservation
+func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
+	// We have to grab the values from the URL (id, s, e)
+	roomID, _ := strconv.Atoi(r.URL.Query().Get("id")) // Get the ID from the Request and convert it to str
+	sd := r.URL.Query().Get("s")
+	ed := r.URL.Query().Get("e")
+
+	// Convert sd and ed from string to date
+	layout := "2006/01/02"
+	startDate, _ := time.Parse(layout, sd)
+	endDate, _ := time.Parse(layout, ed)
+
+	// Create a variable of type <Reservation>
+	var res models.Reservation
+
+	// get the room name by ID
+	room, err := m.DB.GetRoomByID(roomID)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Populate the variable <res>
+	res.Room.RoomName = room.RoomName
+	res.RoomID = roomID
+	res.StartDate = startDate
+	res.EndDate = endDate
+
+	// Put <res> into the session
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	// Redirect
+	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }
