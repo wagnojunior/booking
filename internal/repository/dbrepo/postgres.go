@@ -7,7 +7,7 @@ import (
 	"github.com/wagnojunior/booking/internal/models"
 )
 
-func (m *postgresDBRepo) AllUders() bool {
+func (m *postgresDBRepo) AllUsers() bool {
 	return true
 }
 
